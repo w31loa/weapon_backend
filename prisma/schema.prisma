@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id         Int       @id(map: "Documents_pk") @unique(map: "Documents_image_id_key") @default(autoincrement())
+  url        String
+  name       String
+  size       Int?
+  product_id Int
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  Product Product @relation(fields: [product_id], references: [id])
+}
+
+model User {
+  id         Int       @id(map: "user_pk") @unique(map: "user_id_uindex") @default(autoincrement())
+  login      String?
+  email      String    @unique(map: "user_email_uindex")
+  password   String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+}
+
+model Catecory {
+  id         Int       @id(map: "category_pk") @unique(map: "category_id_uindex") @default(autoincrement())
+  title      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+  Product    Product[]
+}
+
+model Product {
+  id            Int    @id(map: "product_pk") @unique(map: "product_id_uindex") @default(autoincrement())
+  title         String
+  description   String
+  price         Int
+  magazine      Int
+  caliber       String
+  barrel_length Int
+  category_id   Int
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  Category         Catecory          @relation(fields: [category_id], references: [id])
+  Document         Document[]
+  ProductsInBasket ProductsInBaket[]
+}
+
+model Basket {
+  id      Int @id(map: "basket_pk") @unique(map: "basket_id_uindex") @default(autoincrement())
+  user_id Int
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  ProductsInBasket ProductsInBaket[]
+  Order            Order[]
+}
+
+model ProductsInBaket {
+  basket_id  Int
+  product_id Int
+  value      Int @default(1)
+
+  Basket  Basket  @relation(fields: [basket_id], references: [id])
+  Product Product @relation(fields: [product_id], references: [id])
+
+  @@id([product_id, basket_id])
+}
+
+model Order {
+  id        Int @id(map: "order_pk") @unique(map: "order_id_uindex") @default(autoincrement())
+  basket_id Int @unique
+  user_id   Int
+
+  Basket Basket @relation(fields: [basket_id], references: [id])
+}
