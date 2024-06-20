@@ -1,21 +1,26 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProductService } from './product.service';
-import { Product } from './entities/product.entity';
+import { Product } from './models/product.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
+import { ProductModel } from './models/product';
 
 @Resolver(() => Product)
 export class ProductResolver {
   constructor(private readonly productService: ProductService) {}
 
   @Mutation(() => Product)
-  createProduct(@Args('createProductInput') createProductInput: CreateProductInput) {
+  createProduct(@Args('createProductInput') createProductInput: CreateProductInput):Promise<ProductModel> {
     return this.productService.create(createProductInput);
   }
 
-  @Query(() => [Product], { name: 'product' })
-  findAll() {
-    return this.productService.findAll();
+  @Query(() => [Product], { name: 'products' })
+  findAll(
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
+    @Args('categoryId', { type: () => Int, nullable: true }) categoryId?: number
+  ) {
+    return this.productService.findAll(skip, take,categoryId);
   }
 
   @Query(() => Product, { name: 'product' })

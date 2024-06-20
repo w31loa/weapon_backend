@@ -1,16 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
+import { PrismaService } from 'src/common/prisma/prisma.service';
+import { ProductModel } from './models/product';
+import { Product } from './models/product.model';
 
 @Injectable()
 export class ProductService {
-  create(createProductInput: CreateProductInput) {
-    return 'This action adds a new product';
+
+  constructor(private readonly prisma:PrismaService){}
+
+  async create(createProductInput: CreateProductInput):Promise<ProductModel> {
+
+    const produstExist = await this.prisma.product.findFirst({
+      where: {
+        title: createProductInput.title
+      }
+    })
+
+    if(produstExist){
+      throw new BadRequestException('Product with this title exist')
+    }
+
+    return await this.prisma.product.create({
+      data: createProductInput
+    } 
+    )
   }
 
-  findAll() {
-    return `This action returns all product`;
-  }
+  async findAll(skip?:number , take?:number, categoryId?: number):Promise<ProductModel[]> {
+    console.log({skip, take , categoryId})
+    return await this.prisma.product.findMany({
+      where: {category_id: categoryId},
+      take,
+      skip,
+    });
+  } 
 
   findOne(id: number) {
     return `This action returns a #${id} product`;

@@ -17,14 +17,28 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Category {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type Product {
+  id: Int!
+  title: String!
+  description: String!
+  price: Int!
+  magazine: Int!
+  caliber: String!
+  barrel_length: Int!
+  category_id: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+  Catecory: Category!
 }
 
-type Product {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type Category {
+  id: Int!
+  title: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+  Product: [Product!]!
 }
 
 type Basket {
@@ -40,6 +54,7 @@ type Order {
 type Query {
   user(id: Int!): User!
   category(id: Int!): Category!
+  products(skip: Int, take: Int, categoryId: Int): [Product!]!
   product(id: Int!): Product!
   basket(id: Int!): Basket!
   order(id: Int!): Order!
@@ -77,24 +92,32 @@ input UpdateUserInput {
 }
 
 input CreateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  title: String!
 }
 
 input UpdateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  title: String
   id: Int!
 }
 
 input CreateProductInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  title: String!
+  description: String!
+  price: Int!
+  magazine: Int!
+  caliber: String!
+  barrel_length: Int!
+  category_id: Int!
 }
 
 input UpdateProductInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  title: String
+  description: String
+  price: Int
+  magazine: Int
+  caliber: String
+  barrel_length: Int
+  category_id: Int
   id: Int!
 }
 
