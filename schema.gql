@@ -29,7 +29,7 @@ type Product {
   created_at: DateTime!
   updated_at: DateTime!
   deleted_at: DateTime
-  Catecory: Category!
+  Category: Category!
 }
 
 type Category {
