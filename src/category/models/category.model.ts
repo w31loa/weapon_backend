@@ -4,6 +4,6 @@ import { CategoryModel } from './category';
 
 @ObjectType()
 export class Category extends CategoryModel{
-  @Field(()=>[Product])
-  Product: Product[]
+  @Field(()=>[Product] , {nullable : true})
+  Product?: Product[]
 }

@@ -1,5 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsNumber, IsString } from 'class-validator';
+import { Product } from '@prisma/client';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateProductInput {
@@ -31,4 +32,13 @@ export class CreateProductInput {
   @IsNumber()
   @Field(() => Int)
   category_id: number;
+
+  @IsString()
+  @Field(()=> String)
+  article : string
+
+  @IsOptional()
+  @IsArray()
+  @Field(() => [Int], { nullable: true })
+  document_ids: number[];
 }

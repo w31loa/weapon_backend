@@ -20,6 +20,9 @@ export class ProductModel implements Product{
  
   @Field(() => String)
   caliber: string;
+
+  @Field(() => String)
+  article: string;
  
   @Field(() => Int)
   barrel_length: number;

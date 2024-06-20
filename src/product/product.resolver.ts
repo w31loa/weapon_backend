@@ -4,6 +4,7 @@ import { Product } from './models/product.model';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { ProductModel } from './models/product';
+import { FindAllProductsOutput } from './dto/find-all-products.output';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -14,13 +15,14 @@ export class ProductResolver {
     return this.productService.create(createProductInput);
   }
 
-  @Query(() => [Product], { name: 'products' })
+  @Query(() => FindAllProductsOutput, { name: 'products' })
   findAll(
     @Args('skip', { type: () => Int, nullable: true }) skip?: number,
     @Args('take', { type: () => Int, nullable: true }) take?: number,
+    @Args('search', { type: () => String, nullable: true }) search?: string,
     @Args('categoryId', { type: () => Int, nullable: true }) categoryId?: number
-  ) {
-    return this.productService.findAll(skip, take,categoryId);
+  ): Promise<FindAllProductsOutput> {
+    return this.productService.findAll(skip, take,categoryId , search);
   }
 
   @Query(() => Product, { name: 'product' })

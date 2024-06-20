@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Basket {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type User {
   id: Int!
   login: String!
@@ -10,12 +15,33 @@ type User {
   created_at: DateTime!
   updated_at: DateTime!
   deleted_at: DateTime
+  Basket: Basket
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Document {
+  id: Int!
+  url: String!
+  name: String!
+  size: Int
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+}
+
+type ProductDocument {
+  product_id: Int!
+  document_id: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+  Document: Document
+  Product: Product
+}
 
 type Product {
   id: Int!
@@ -24,12 +50,14 @@ type Product {
   price: Int!
   magazine: Int!
   caliber: String!
+  article: String!
   barrel_length: Int!
   category_id: Int!
   created_at: DateTime!
   updated_at: DateTime!
   deleted_at: DateTime
-  Category: Category!
+  Category: Category
+  ProductDocument: [ProductDocument!]
 }
 
 type Category {
@@ -38,12 +66,12 @@ type Category {
   created_at: DateTime!
   updated_at: DateTime!
   deleted_at: DateTime
-  Product: [Product!]!
+  Product: [Product!]
 }
 
-type Basket {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type FindAllProductsOutput {
+  products: [Product!]
+  totalCount: Int!
 }
 
 type Order {
@@ -54,7 +82,7 @@ type Order {
 type Query {
   user(id: Int!): User!
   category(id: Int!): Category!
-  products(skip: Int, take: Int, categoryId: Int): [Product!]!
+  products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!
   basket(id: Int!): Basket!
   order(id: Int!): Order!
@@ -108,6 +136,8 @@ input CreateProductInput {
   caliber: String!
   barrel_length: Int!
   category_id: Int!
+  article: String!
+  document_ids: [Int!]
 }
 
 input UpdateProductInput {
@@ -118,6 +148,8 @@ input UpdateProductInput {
   caliber: String
   barrel_length: Int
   category_id: Int
+  article: String
+  document_ids: [Int!]
   id: Int!
 }
 

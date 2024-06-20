@@ -28,7 +28,14 @@ export class UserService {
     const hashPassword = await bcrypt.hash(createUserInput.password, 3);
     createUserInput.password = hashPassword
     return this.prisma.user.create({
-      data: createUserInput
+      data: {
+        ...createUserInput,
+        Basket:{
+          create:{}
+        }
+      },
+
+        
     })
   }
 
