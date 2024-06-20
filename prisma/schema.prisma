@@ -28,12 +28,13 @@ model Document {
 
 model User {
   id         Int       @id(map: "user_pk") @unique(map: "user_id_uindex") @default(autoincrement())
-  login      String?
+  login      String   @unique(map: "user_login_uindex")
   email      String    @unique(map: "user_email_uindex")
   password   String
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
+  Basket Basket?
 }
 
 model Catecory {
@@ -66,13 +67,14 @@ model Product {
 
 model Basket {
   id      Int @id(map: "basket_pk") @unique(map: "basket_id_uindex") @default(autoincrement())
-  user_id Int
+  user_id Int @unique
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   ProductsInBasket ProductsInBaket[]
+  User User @relation(fields: [user_id], references: [id]) 
   Order            Order[]
 }
 
