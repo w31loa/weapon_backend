@@ -28,15 +28,12 @@ export class ProductService {
     )
   }
 
-  async findAll(skip?:number , take?:number, categoryId?: number):Promise<Product[]> {
+  async findAll(skip?:number , take?:number, categoryId?: number):Promise<ProductModel[]> {
     console.log({skip, take , categoryId})
     return await this.prisma.product.findMany({
       where: {category_id: categoryId},
       take,
       skip,
-      include:{
-        Category:true
-      }
     });
   } 
 
