@@ -76,7 +76,6 @@ export class ProductService {
         },
         Category: true
       }
-      
     });
 
     const totalCount = await this.prisma.product.count({ where })

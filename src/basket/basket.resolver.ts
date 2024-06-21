@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { BasketService } from './basket.service';
-import { Basket } from './entities/basket.entity';
+import { Basket } from './models/basket.model';
 import { CreateBasketInput } from './dto/create-basket.input';
 import { UpdateBasketInput } from './dto/update-basket.input';
 

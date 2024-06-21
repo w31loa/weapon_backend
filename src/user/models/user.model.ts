@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { UserModel } from './user';
-import { Basket } from 'src/basket/entities/basket.entity';
+import { Basket } from 'src/basket/models/basket.model';
 
 
 @ObjectType()
