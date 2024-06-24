@@ -9,6 +9,7 @@ import { GqlJwtAuthGuard } from 'src/common/guards/gql-jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { IPayload } from 'src/common/interfaces/payload.interface';
 import { ProductsInBasket } from './models/product-in-basket.model';
+import { FindAllProductsInBasketOutput } from './dto/find-all-products-in-basket.output';
 
 @Resolver(() => Basket)
 export class BasketResolver {
@@ -24,22 +25,38 @@ export class BasketResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
-  @Query(() => [ProductsInBasket], { name: 'basketForUser' })
-  findAll(@CurrentUser() user: IPayload): Promise<ProductsInBasket[]> {
+  @Query(() => FindAllProductsInBasketOutput, { name: 'basketForUser' })
+  findAll(
+    @CurrentUser() user: IPayload,
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number
+    ): Promise<FindAllProductsInBasketOutput> {
     return this.basketService.findAll(user.id);
-  } 
+  }
 
   @UseGuards(GqlJwtAuthGuard)
-  @Mutation(() => ProductsInBasket, { name: 'changeProductValueInBasket' }) 
+  @Mutation(() => ProductsInBasket, { name: 'changeProductValueInBasket' })
   updateBasket(
     @Args('updateBasketInput') updateBasketInput: UpdateBasketInput,
     @CurrentUser() user: IPayload
-    ) {
-    return this.basketService.update(user.id , updateBasketInput);
+  ): Promise<ProductsInBasket> {
+    return this.basketService.update(user.id, updateBasketInput);
   }
 
-  @Mutation(() => Basket)
-  removeBasket(@Args('id', { type: () => Int }) id: number) {
-    return this.basketService.remove(id);
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => ProductsInBasket, { name: 'removeProductFromBasket' })
+  removeProductFromBasket(
+    @Args('product_id', { type: () => Int }) product_id: number,
+    @CurrentUser() user: IPayload
+  ): Promise<ProductsInBasket> {
+    return this.basketService.removeProductFromBasket(user.id, product_id);
   }
-}
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [ProductsInBasket], { name: 'clearBasket' })
+  clearBasket(
+    @CurrentUser() user: IPayload
+  ): Promise<ProductsInBasket[]> {
+    return this.basketService.clearBasket(user.id);
+  }
+} 

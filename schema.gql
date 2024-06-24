@@ -121,7 +121,8 @@ type Mutation {
   removeProduct(id: Int!): Product!
   addProductToBasket(addProductToBasketInput: AddProductToBasketInput!): ProductsInBasket!
   changeProductValueInBasket(updateBasketInput: UpdateBasketInput!): ProductsInBasket!
-  removeBasket(id: Int!): Basket!
+  removeProductFromBasket(product_id: Int!): ProductsInBasket!
+  clearBasket: [ProductsInBasket!]!
   createOrder(createOrderInput: CreateOrderInput!): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   removeOrder(id: Int!): Order!

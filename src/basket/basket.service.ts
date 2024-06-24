@@ -5,6 +5,8 @@ import { User } from 'src/user/models/user.model';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { Basket } from './models/basket.model';
 import { ProductsInBasket } from './models/product-in-basket.model';
+import { Prisma } from '@prisma/client';
+import { FindAllProductsInBasketOutput } from './dto/find-all-products-in-basket.output';
 
 @Injectable()
 export class BasketService {
@@ -27,42 +29,111 @@ export class BasketService {
     }
 
     const basket = await this.getBasketByUserId(userId)
-    return await this.prisma.productsInBaket.create({
-      data: {
+    return await this.prisma.productsInBaket.upsert({
+      where: {
+        product_id_basket_id: {
+          basket_id: basket.id,
+          product_id: productId,
+        }
+      },
+      update: {
+        deleted_at: null,
+      },
+      create: {
         basket_id: basket.id,
         product_id: productId,
       }
     })
   }
 
-  async findAll(userId: number): Promise<ProductsInBasket[]> {
+  async findAll(userId: number, skip?: number, take?: number): Promise<FindAllProductsInBasketOutput> {
     const basket = await this.getBasketByUserId(userId)
-    return await this.prisma.productsInBaket.findMany({
-      where:{
-        basket_id: basket.user_id
-      },
+
+    const where: Prisma.ProductsInBaketWhereInput = {
+      basket_id: basket.user_id
+    }
+
+    const totalCount = await this.prisma.productsInBaket.count({ where })
+
+    const receivedProductsInBasket =  await this.prisma.productsInBaket.findMany({
+      where,
+      skip,
+      take
     });
+
+    return{
+      productsInBasket: receivedProductsInBasket,
+      totalCount
+    }
   }
 
 
 
-  async update(userId: number, updateBasketInput: UpdateBasketInput) {
+  async update(userId: number, updateBasketInput: UpdateBasketInput): Promise<ProductsInBasket | null> {
     const basket = await this.getBasketByUserId(userId)
-    return this.prisma.productsInBaket.updateMany({
-     where:{
-      basket_id: basket.id
-     },
-      data: {
+    await this.prisma.productsInBaket.updateMany({
+      where: {
         product_id: updateBasketInput.product_id,
+        basket_id: basket.id
+
+      },
+      data: {
         value: updateBasketInput.value
       },
-     
+
     })
-    
+
+    return await this.prisma.productsInBaket.findFirst({
+      where: {
+        product_id: updateBasketInput.product_id,
+        basket_id: basket.id
+      }
+    })
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} basket`;
+  async removeProductFromBasket(userId: number, product_id: number): Promise<ProductsInBasket> {
+    const basket = await this.getBasketByUserId(userId)
+    const receivedProduct = await this.prisma.productsInBaket.findFirst({
+      where: {
+        product_id,
+        basket_id: basket.id
+      }
+    })
+
+    if (!receivedProduct) {
+      throw new BadRequestException('This product does not exist or was previously removed')
+    }
+
+    await this.prisma.productsInBaket.delete({
+      where: {
+        product_id_basket_id: {
+          basket_id: basket.id,
+          product_id,
+        }
+      }
+    });
+
+    return receivedProduct
+  }
+
+  async clearBasket(userId: number): Promise<ProductsInBasket[]> {
+    const basket = await this.getBasketByUserId(userId)
+
+    const receivedProducts = await this.prisma.productsInBaket.findMany({
+      where: {
+        basket_id: basket.id
+      }
+    })
+
+    await this.prisma.productsInBaket.deleteMany({
+      where: {
+        basket_id: basket.id
+      }
+    })
+
+    return receivedProducts
+
   }
 
   async getBasketByUserId(userId: number): Promise<Basket> {

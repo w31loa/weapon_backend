@@ -7,10 +7,10 @@ import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { BasketModule } from './basket/basket.module';
 import { OrderModule } from './order/order.module';
-import { DocumentModule } from './common/document/document.module';
 import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
+import { DocumentModule } from './document/document.module';
 
 @Module({
   imports: [

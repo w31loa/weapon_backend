@@ -3,14 +3,19 @@ import { OrderService } from './order.service';
 import { Order } from './models/order.model';
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
+import { CurrentUser } from 'src/common/decorators/user.decorator.graphql';
+import { IPayload } from 'src/common/interfaces/payload.interface';
+import { GqlJwtAuthGuard } from 'src/common/guards/gql-jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => Order)
 export class OrderResolver {
   constructor(private readonly orderService: OrderService) {}
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Order)
-  createOrder(@Args('createOrderInput') createOrderInput: CreateOrderInput) {
-    return this.orderService.create(createOrderInput);
+  createOrder(@CurrentUser() user:IPayload):Promise<Order> {
+    return this.orderService.create(user.id);
   }
 
   @Query(() => [Order], { name: 'order' })
