@@ -13,14 +13,14 @@ export class CategoryService {
 
   async create(createCategoryInput: CreateCategoryInput): Promise<CategoryModel> {
 
-    const categoryExist = await this.prisma.catecory.findFirst({
+    const categoryExist = await this.prisma.category.findFirst({
       where: {title: createCategoryInput.title}
     })
     if(categoryExist){
       throw new BadRequestException("This category already exist!")
     }
 
-    return await this.prisma.catecory.create({
+    return await this.prisma.category.create({
       data: createCategoryInput
     })
   }

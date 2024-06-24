@@ -78,6 +78,17 @@ type FindAllProductsOutput {
   totalCount: Int!
 }
 
+type ProductsInBasket {
+  basket_id: Int!
+  product_id: Int!
+  value: Int!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+  Basket: Basket
+  Product: Product
+}
+
 type Order {
   id: Int!
   user_id: Int!
@@ -94,7 +105,7 @@ type Query {
   category(id: Int!): Category!
   products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!
-  basket(id: Int!): Basket!
+  basketForUser: [ProductsInBasket!]!
   order(id: Int!): Order!
 }
 
@@ -108,8 +119,8 @@ type Mutation {
   createProduct(createProductInput: CreateProductInput!): Product!
   updateProduct(updateProductInput: UpdateProductInput!): Product!
   removeProduct(id: Int!): Product!
-  createBasket(createBasketInput: CreateBasketInput!): Basket!
-  updateBasket(updateBasketInput: UpdateBasketInput!): Basket!
+  addProductToBasket(addProductToBasketInput: AddProductToBasketInput!): ProductsInBasket!
+  changeProductValueInBasket(updateBasketInput: UpdateBasketInput!): ProductsInBasket!
   removeBasket(id: Int!): Basket!
   createOrder(createOrderInput: CreateOrderInput!): Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
@@ -163,15 +174,13 @@ input UpdateProductInput {
   id: Int!
 }
 
-input CreateBasketInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input AddProductToBasketInput {
+  productId: Int!
 }
 
 input UpdateBasketInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  product_id: Int!
+  value: Int!
 }
 
 input CreateOrderInput {

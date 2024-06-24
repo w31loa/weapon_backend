@@ -1,7 +1,9 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { IsNumber } from 'class-validator';
 
 @InputType()
-export class CreateBasketInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+export class AddProductToBasketInput {
+  @IsNumber()
+  @Field(() => Int)
+  productId: number;
 }

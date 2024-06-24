@@ -1,8 +1,8 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Catecory } from '@prisma/client';
+import { Category } from '@prisma/client';
 
 @ObjectType()
-export class CategoryModel implements Catecory {
+export class CategoryModel implements Category {
   @Field(() => Int)
   id: number;
 

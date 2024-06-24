@@ -36,13 +36,14 @@ model User {
   Basket     Basket?
 }
 
-model Catecory {
+model Category {
   id         Int       @id(map: "category_pk") @unique(map: "category_id_uindex") @default(autoincrement())
   title      String    @unique
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
   Product    Product[]
+	@@map("Catecory")
 }
 
 model Product {
@@ -60,7 +61,7 @@ model Product {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  Category         Catecory          @relation(fields: [category_id], references: [id])
+  Category         Category          @relation(fields: [category_id], references: [id])
   ProductDocument  ProductDocument[]
   ProductsInBasket ProductsInBaket[]
 }
@@ -92,7 +93,7 @@ model Basket {
 }
 
 model ProductsInBaket {
-  basket_id  Int
+  basket_id  Int 
   product_id Int
   value      Int @default(1)
 

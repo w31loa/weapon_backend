@@ -26,6 +26,15 @@ export class ProductService {
         article: createProductData.article,
       }
     })
+    const category = await this.prisma.category.findFirst({
+      where: {
+        id: createProductInput.category_id
+      }
+    })
+
+    if(!category){
+      throw new BadRequestException(`Category with id ${createProductData.category_id} does not exist`)
+    }
 
     if (document_ids && document_ids.length > 0) {
       document_ids.forEach((id) => {
