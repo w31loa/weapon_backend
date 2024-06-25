@@ -7,6 +7,8 @@ import { Basket } from './models/basket.model';
 import { ProductsInBasket } from './models/product-in-basket.model';
 import { Prisma } from '@prisma/client';
 import { FindAllProductsInBasketOutput } from './dto/find-all-products-in-basket.output';
+import { ConfigService } from '@nestjs/config';
+import { join } from 'path';
 
 @Injectable()
 export class BasketService {
@@ -14,10 +16,12 @@ export class BasketService {
   //   return 'This action adds a new basket';
   // }
 
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService, private readonly configService:ConfigService) { }
 
   async addProductInBasket(userId: number, productId: number): Promise<ProductsInBasket> {
+    const destination = join(__dirname, '..', this.configService.get('STATIC_PATH'))
 
+    console.log(destination)
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId

@@ -46,7 +46,6 @@ export class DocumentService {
 
         const destination = join(__dirname, '..', this.configService.get('STATIC_PATH'))
 
-
         fs.writeFileSync(
             `${destination}/${fileName}`,
             file.buffer,
@@ -57,6 +56,56 @@ export class DocumentService {
             url: `${destination}/${fileName}`,
         });
     }
+
+    async uploadFiles(files: Express.Multer.File[]): Promise<Document[]> {
+        interface Data {
+          name: string;
+          url: string;
+          size: number;
+        }
+    
+        try {
+    
+          const staticPath = this.configService.get('STATIC_PATH');
+          const uploadPath = join(__dirname, '..', '..', staticPath);
+    
+          await this.createFolderIfDoesNotExist(uploadPath);
+    
+          const dataArr: Data[] = files.map((file: Express.Multer.File): Data => {
+            const fileName = `${uuidv4()}${extname(file.originalname)}`;
+            const fileUrl = `${uuidv4()}${extname(file.originalname)}`;
+    
+            fs.writeFile(`${uploadPath}/${fileUrl}`, file.buffer, (e) => {
+              if (e) {
+                throw new BadRequestException(`Write file error`);
+              }
+            });
+    
+            return {
+              name: fileName,
+              url: fileUrl,
+              size: file.size,
+            };
+          });
+    
+          return this.prisma.$transaction(dataArr.map((data) => this.prisma.document.create({ data })));
+        } catch (e) {
+          this.logger.error(e);
+          if (e instanceof BadRequestException) {
+            throw e;
+          }
+          throw new BadRequestException(`Files upload error`);
+        }
+      }
+
+
+      async createFolderIfDoesNotExist(destination: string): Promise<void> {
+        await fs.promises
+          .open(destination)
+          .then(async (fileHandle) => {
+            await fileHandle.close();
+          })
+      }
 
 
 }

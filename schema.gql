@@ -89,6 +89,11 @@ type ProductsInBasket {
   Product: Product
 }
 
+type FindAllProductsInBasketOutput {
+  productsInBasket: [ProductsInBasket!]
+  totalCount: Int!
+}
+
 type Order {
   id: Int!
   user_id: Int!
@@ -105,7 +110,7 @@ type Query {
   category(id: Int!): Category!
   products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!
-  basketForUser: [ProductsInBasket!]!
+  basketForUser(skip: Int, take: Int): FindAllProductsInBasketOutput!
   order(id: Int!): Order!
 }
 
@@ -123,7 +128,7 @@ type Mutation {
   changeProductValueInBasket(updateBasketInput: UpdateBasketInput!): ProductsInBasket!
   removeProductFromBasket(product_id: Int!): ProductsInBasket!
   clearBasket: [ProductsInBasket!]!
-  createOrder(createOrderInput: CreateOrderInput!): Order!
+  createOrder: Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   removeOrder(id: Int!): Order!
 }
@@ -182,11 +187,6 @@ input AddProductToBasketInput {
 input UpdateBasketInput {
   product_id: Int!
   value: Int!
-}
-
-input CreateOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
 }
 
 input UpdateOrderInput {
