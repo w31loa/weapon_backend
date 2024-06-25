@@ -39,10 +39,6 @@ export class UserService {
     })
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
-
   findOne(id: number) {
     return this.prisma.user.findFirst({
       where: {id},
@@ -59,13 +55,5 @@ export class UserService {
         Basket:true
       }
     })
-  }
-
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }

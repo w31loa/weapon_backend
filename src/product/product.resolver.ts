@@ -26,17 +26,17 @@ export class ProductResolver {
   }
 
   @Query(() => Product, { name: 'product' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => Int }) id: number):Promise<Product>{
     return this.productService.findOne(id);
   }
 
   @Mutation(() => Product)
-  updateProduct(@Args('updateProductInput') updateProductInput: UpdateProductInput) {
+  updateProduct(@Args('updateProductInput') updateProductInput: UpdateProductInput):Promise<Product> {
     return this.productService.update(updateProductInput.id, updateProductInput);
   }
 
   @Mutation(() => Product)
-  removeProduct(@Args('id', { type: () => Int }) id: number) {
+  removeProduct(@Args('id', { type: () => Int }) id: number):Promise<Product> {
     return this.productService.remove(id);
   }
 }

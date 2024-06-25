@@ -90,7 +90,6 @@ export class DocumentService {
     
           return this.prisma.$transaction(dataArr.map((data) => this.prisma.document.create({ data })));
         } catch (e) {
-          this.logger.error(e);
           if (e instanceof BadRequestException) {
             throw e;
           }

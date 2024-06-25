@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { PrismaService } from 'src/common/prisma/prisma.service';
@@ -32,7 +32,7 @@ export class ProductService {
       }
     })
 
-    if(!category){
+    if (!category) {
       throw new BadRequestException(`Category with id ${createProductData.category_id} does not exist`)
     }
 
@@ -97,15 +97,39 @@ export class ProductService {
 
 
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number): Promise<Product> {
+    const receivedProduct = await this.prisma.product.findFirst({
+      where: {
+        id
+      },
+      include: {
+        ProductDocument: {
+          where: {
+            deleted_at: null
+          }
+        },
+        Category: true
+      }
+    })
+
+    if (!receivedProduct) {
+      throw new NotFoundException()
+    }
+
+    return receivedProduct
   }
 
-  update(id: number, updateProductInput: UpdateProductInput) {
-    return `This action updates a #${id} product`;
+  async update(id: number, updateProductInput: UpdateProductInput): Promise<Product | null> {
+    await this.prisma.product.update({
+      where:{id},
+      data: updateProductInput
+    })
+    return this.findOne(id)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(id: number):Promise<Product> {
+    return this.prisma.product.delete({
+      where: {id}
+    });
   }
 }
