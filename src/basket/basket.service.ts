@@ -135,7 +135,7 @@ export class BasketService {
   async getBasketByUserId(userId: number): Promise<Basket> {
     return await this.prisma.basket.findFirst({
       where: {
-        user_id: userId
+        user_id: userId 
       }
     })
   }

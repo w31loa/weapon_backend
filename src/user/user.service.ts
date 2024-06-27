@@ -28,7 +28,7 @@ export class UserService {
     createUserInput.password = hashPassword
     return this.prisma.user.create({
       data: {
-        ...createUserInput,
+        ...createUserInput, 
         Basket: {
           create: {}
         }

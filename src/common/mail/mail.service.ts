@@ -28,7 +28,7 @@ export class MailService {
         })
 
         const productsHtml = data.ProductsInBasket.map(el => {
-            return `<p>${el.Product.title} ${el.value}шт.</p>`
+            return `<p>${el.Product.title} ${el.value} шт.</p>`
         }).join('')
         this.mailerService.sendMail({
             to: user.email,
