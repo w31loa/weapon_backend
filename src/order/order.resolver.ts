@@ -23,8 +23,8 @@ export class OrderResolver {
   @Query(() => FindAllOrdersOutput, { name: 'orders' })
   findAll(
     @Args('skip', { type: () => Int, nullable: true }) skip?: number,
-    @Args('take', { type: () => Int, nullable: true }) take?: number, 
-  ): Promise<FindAllOrdersOutput>  {
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
+  ): Promise<FindAllOrdersOutput> {
     return this.orderService.findAll();
   }
 

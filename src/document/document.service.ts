@@ -30,7 +30,6 @@ export class DocumentService {
     return await this.prisma.document.delete({ where: { id } });
   }
 
-
   async findOne(id: number): Promise<Document | null> {
     return await this.prisma.document.findUnique({ where: { id } });
   }
@@ -55,9 +54,6 @@ export class DocumentService {
 
     return this.prisma.document.findFirst({ where: { id } });
   }
-
-
-
 
   async uploadFile(file: Express.Multer.File): Promise<Document> {
     const fileName = `${uuidv4()}${extname(file.originalname)}`;
@@ -115,7 +111,6 @@ export class DocumentService {
       throw new BadRequestException(`Files upload error`);
     }
   }
-
 
   async createFolderIfDoesNotExist(destination: string): Promise<void> {
     await fs.promises

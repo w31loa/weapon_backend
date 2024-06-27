@@ -24,7 +24,7 @@ export class CategoryService {
     })
   }
 
-  async findAll(skip?: number, take?: number,):Promise<FindAllCategoriesOutput> {
+  async findAll(skip?: number, take?: number,): Promise<FindAllCategoriesOutput> {
     const recievidCategoires = await this.prisma.category.findMany({
       take,
       skip
@@ -38,7 +38,7 @@ export class CategoryService {
     }
   }
 
-  async findOne(id: number):Promise<Category>{
+  async findOne(id: number): Promise<Category> {
     const receivedCategory = await this.prisma.product.findFirst({
       where: {
         id
@@ -51,17 +51,17 @@ export class CategoryService {
 
   }
 
-  async update(id: number, updateCategoryInput: UpdateCategoryInput):Promise<Category | null>{
+  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category | null> {
     await this.prisma.category.update({
-      where:{id},
+      where: { id },
       data: updateCategoryInput
     })
-    return this.findOne(id) 
+    return this.findOne(id)
   }
 
-  async remove(id: number):Promise<Category> {
-      return this.prisma.category.delete({
-      where: {id}
+  async remove(id: number): Promise<Category> {
+    return this.prisma.category.delete({
+      where: { id }
     });
   }
 }

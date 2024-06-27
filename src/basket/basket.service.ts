@@ -16,9 +16,6 @@ export class BasketService {
   constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) { }
 
   async addProductInBasket(userId: number, productId: number): Promise<ProductsInBasket> {
-    const destination = join(__dirname, '..', this.configService.get('STATIC_PATH'))
-
-    console.log(destination)
     const product = await this.prisma.product.findFirst({
       where: {
         id: productId
@@ -67,8 +64,6 @@ export class BasketService {
       totalCount
     }
   }
-
-
 
   async update(userId: number, updateBasketInput: UpdateBasketInput): Promise<ProductsInBasket | null> {
     const basket = await this.getBasketByUserId(userId)

@@ -8,51 +8,48 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 @Injectable()
 export class UserService {
 
-  constructor(private readonly prisma:PrismaService){}
+  constructor(private readonly prisma: PrismaService) { }
 
-  async create(createUserInput: CreateUserInput) : Promise<User> {
+  async create(createUserInput: CreateUserInput): Promise<User> {
 
     const loginExist = await this.findOneByLogin(createUserInput.login)
     const emailExist = await this.prisma.user.findFirst({
-      where: {email: createUserInput.email}
+      where: { email: createUserInput.email }
     })
 
-    if(loginExist){
+    if (loginExist) {
       throw new BadRequestException('Login already exist')
     }
-    if(emailExist){
+    if (emailExist) {
       throw new BadRequestException('Email already exist')
     }
-
 
     const hashPassword = await bcrypt.hash(createUserInput.password, 3);
     createUserInput.password = hashPassword
     return this.prisma.user.create({
       data: {
         ...createUserInput,
-        Basket:{
-          create:{}
+        Basket: {
+          create: {}
         }
       },
-
-        
     })
   }
 
   findOne(id: number) {
     return this.prisma.user.findFirst({
-      where: {id},
-      include:{
-        Basket:true
+      where: { id },
+      include: {
+        Basket: true
       }
     })
   }
 
   findOneByLogin(login: string) {
     return this.prisma.user.findUnique({
-      where: {login},
-      include:{
-        Basket:true
+      where: { login },
+      include: {
+        Basket: true
       }
     })
   }

@@ -77,7 +77,7 @@ export class ProductService {
       where,
       take,
       skip,
-      include: { 
+      include: {
         ProductDocument: {
           where: {
             deleted_at: null
@@ -94,8 +94,6 @@ export class ProductService {
     }
   }
 
-
-
   async findOne(id: number): Promise<Product> {
     const receivedProduct = await this.prisma.product.findFirst({
       where: {
@@ -103,13 +101,13 @@ export class ProductService {
       },
       include: {
         ProductDocument: {
-          where: { 
-            deleted_at: null 
-          } 
+          where: {
+            deleted_at: null
+          }
         },
         Category: true
-      }  
-    }) 
+      }
+    })
 
     if (!receivedProduct) {
       throw new NotFoundException()
@@ -120,15 +118,15 @@ export class ProductService {
 
   async update(id: number, updateProductInput: UpdateProductInput): Promise<Product | null> {
     await this.prisma.product.update({
-      where:{id},
+      where: { id },
       data: updateProductInput
     })
-    return this.findOne(id) 
+    return this.findOne(id)
   }
 
-  remove(id: number):Promise<Product> {
+  remove(id: number): Promise<Product> {
     return this.prisma.product.delete({
-      where: {id}
+      where: { id }
     });
   }
 }
