@@ -12,11 +12,8 @@ import { join } from 'path';
 
 @Injectable()
 export class BasketService {
-  // create(createBasketInput: CreateBasketInput) {
-  //   return 'This action adds a new basket';
-  // }
 
-  constructor(private readonly prisma: PrismaService, private readonly configService:ConfigService) { }
+  constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) { }
 
   async addProductInBasket(userId: number, productId: number): Promise<ProductsInBasket> {
     const destination = join(__dirname, '..', this.configService.get('STATIC_PATH'))
@@ -59,13 +56,13 @@ export class BasketService {
 
     const totalCount = await this.prisma.productsInBaket.count({ where })
 
-    const receivedProductsInBasket =  await this.prisma.productsInBaket.findMany({
+    const receivedProductsInBasket = await this.prisma.productsInBaket.findMany({
       where,
       skip,
       take
     });
 
-    return{
+    return {
       productsInBasket: receivedProductsInBasket,
       totalCount
     }

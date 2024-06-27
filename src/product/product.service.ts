@@ -77,7 +77,7 @@ export class ProductService {
       where,
       take,
       skip,
-      include: {
+      include: { 
         ProductDocument: {
           where: {
             deleted_at: null
@@ -88,7 +88,6 @@ export class ProductService {
     });
 
     const totalCount = await this.prisma.product.count({ where })
-
     return {
       products: recivedProducts,
       totalCount
@@ -104,13 +103,13 @@ export class ProductService {
       },
       include: {
         ProductDocument: {
-          where: {
-            deleted_at: null
-          }
+          where: { 
+            deleted_at: null 
+          } 
         },
         Category: true
-      }
-    })
+      }  
+    }) 
 
     if (!receivedProduct) {
       throw new NotFoundException()
@@ -124,7 +123,7 @@ export class ProductService {
       where:{id},
       data: updateProductInput
     })
-    return this.findOne(id)
+    return this.findOne(id) 
   }
 
   remove(id: number):Promise<Product> {

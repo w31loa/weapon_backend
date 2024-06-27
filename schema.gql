@@ -105,13 +105,24 @@ type Order {
   Basket: Basket
 }
 
+type FindAllOrdersOutput {
+  orders: [Order!]
+  totalCount: Int!
+}
+
 type Query {
   user(id: Int!): User!
+  categories(skip: Int, take: Int): [Category!]!
   category(id: Int!): Category!
   products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!
   basketForUser(skip: Int, take: Int): FindAllProductsInBasketOutput!
+  orders(skip: Int, take: Int): FindAllOrdersOutput!
   order(id: Int!): Order!
+  documents(take: Int, skip: Int): [Document!]!
+  document(id: Int!): Document!
+  getDocuments(id: [Int!]!): [Document!]
+  getDocument(id: Int!): [Document!]
 }
 
 type Mutation {
@@ -129,6 +140,8 @@ type Mutation {
   createOrder: Order!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
   removeOrder(id: Int!): Order!
+  createDocument(createDocumentInput: CreateDocumentInput!): Document!
+  updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
 }
 
 input CreateUserInput {
@@ -183,5 +196,18 @@ input UpdateBasketInput {
 input UpdateOrderInput {
   """Example field (placeholder)"""
   exampleField: Int
+  id: Int!
+}
+
+input CreateDocumentInput {
+  url: String!
+  name: String!
+  size: Int
+}
+
+input UpdateDocumentInput {
+  url: String
+  name: String
+  size: Int
   id: Int!
 }

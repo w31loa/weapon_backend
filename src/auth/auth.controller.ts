@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { RegistrationDto } from './dto/registration.dto';
@@ -8,6 +8,7 @@ import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 import { JwtPayload } from 'src/common/interfaces/jwtPayload.interface';
 import { CurrentUser } from 'src/common/decorators/user.decorator.restapi';
+import { MailService } from 'src/common/mail/mail.service';
 
 @Controller('auth')
 export class AuthController {
@@ -29,4 +30,5 @@ export class AuthController {
   refresh(@CurrentUser() user: User): Promise<TokensInterface> {
     return this.authService.refresh(user.id);
   }
+
 }

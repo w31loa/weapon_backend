@@ -109,11 +109,11 @@ model ProductsInBaket {
 
 model Order {
   id         Int       @id(map: "order_pk") @unique(map: "order_id_uindex") @default(autoincrement())
-  basket_id  Int       @unique
+  basket_id  Int       
   user_id    Int
   created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  updated_at DateTime  @updatedAt 
   deleted_at DateTime?
-
+ 
   Basket Basket @relation(fields: [basket_id], references: [id])
 }

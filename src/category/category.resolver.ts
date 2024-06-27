@@ -3,34 +3,42 @@ import { CategoryService } from './category.service';
 import { Category } from './models/category.model';
 import { CreateCategoryInput } from './dto/create-category.input';
 import { UpdateCategoryInput } from './dto/update-category.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlJwtAuthGuard } from 'src/common/guards/gql-jwt-auth.guard';
 
 @Resolver(() => Category)
 export class CategoryResolver {
   constructor(private readonly categoryService: CategoryService) { }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Category)
-  createCategory(@Args('createCategoryInput') createCategoryInput: CreateCategoryInput) {
+  createCategory(@Args('createCategoryInput') createCategoryInput: CreateCategoryInput):Promise<Category> {
     return this.categoryService.create(createCategoryInput);
   }
 
-  @Query(() => [Category], { name: 'category' })
+  @UseGuards(GqlJwtAuthGuard)
+  @Query(() => [Category], { name: 'categories' })
   findAll(
- 
+    @Args('skip', { type: () => Int, nullable: true }) skip?: number,
+    @Args('take', { type: () => Int, nullable: true }) take?: number,
   ) {
     return this.categoryService.findAll();
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Query(() => Category, { name: 'category' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.categoryService.findOne(id);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Category)
   updateCategory(@Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput) {
     return this.categoryService.update(updateCategoryInput.id, updateCategoryInput);
   }
 
   @Mutation(() => Category)
+  @UseGuards(GqlJwtAuthGuard)
   removeCategory(@Args('id', { type: () => Int }) id: number) {
     return this.categoryService.remove(id);
   }
