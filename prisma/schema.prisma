@@ -14,106 +14,106 @@ datasource db {
 }
 
 model Document {
-  id         Int       @id(map: "Documents_pk") @unique(map: "Documents_image_id_key") @default(autoincrement())
-  url        String
-  name       String
-  size       Int?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  id                   Int                    @id(map: "Documents_pk") @unique(map: "Documents_image_id_key") @default(autoincrement())
+  url                  String
+  name                 String
+  size                 Int?
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  deleted_at           DateTime?
 
-  Product ProductDocument[]
+  Product              ProductDocument[]
 }
 
 model User {
-  id         Int       @id(map: "user_pk") @unique(map: "user_id_uindex") @default(autoincrement())
-  login      String    @unique(map: "user_login_uindex")
-  email      String    @unique(map: "user_email_uindex")
-  password   String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-  Basket     Basket?
+  id                   Int                   @id(map: "user_pk") @unique(map: "user_id_uindex") @default(autoincrement())
+  login                String                @unique(map: "user_login_uindex")
+  email                String                @unique(map: "user_email_uindex")
+  password             String
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
+  Basket               Basket?
 }
 
 model Category {
-  id         Int       @id(map: "category_pk") @unique(map: "category_id_uindex") @default(autoincrement())
-  title      String    @unique
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
-  Product    Product[]
+  id                   Int                   @id(map: "category_pk") @unique(map: "category_id_uindex") @default(autoincrement())
+  title                String                @unique
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
+  Product              Product[]
 	@@map("Catecory")
 }
 
 model Product {
-  id            Int    @id(map: "product_pk") @unique(map: "product_id_uindex") @default(autoincrement())
-  title         String @unique
-  article       String @unique
-  description   String
-  price         Int
-  magazine      Int
-  caliber       String
-  barrel_length Int
-  category_id   Int
+  id                   Int                   @id(map: "product_pk") @unique(map: "product_id_uindex") @default(autoincrement())
+  title                String                @unique
+  article              String                @unique
+  description          String
+  price                Int
+  magazine             Int
+  caliber              String
+  barrel_length        Int
+  category_id          Int
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
 
-  Category         Category          @relation(fields: [category_id], references: [id])
-  ProductDocument  ProductDocument[]
-  ProductsInBasket ProductsInBaket[]
+  Category             Category              @relation(fields: [category_id], references: [id])
+  ProductDocument      ProductDocument[]
+  ProductsInBasket     ProductsInBaket[]
 }
 
 model ProductDocument {
-  product_id  Int
-  document_id Int
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  deleted_at  DateTime?
+  product_id           Int
+  document_id          Int
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
 
-  Product  Product  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_id_fk")
-  Document Document @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_id_fk")
+  Product              Product               @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_id_fk")
+  Document             Document              @relation(fields: [document_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "document_id_fk")
 
   @@id([product_id, document_id])
 }
 
 model Basket {
-  id      Int @id(map: "basket_pk") @unique(map: "basket_id_uindex") @default(autoincrement())
-  user_id Int @unique
+  id                   Int                   @id(map: "basket_pk") @unique(map: "basket_id_uindex") @default(autoincrement())
+  user_id              Int                   @unique
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
 
-  ProductsInBasket ProductsInBaket[]
-  User             User              @relation(fields: [user_id], references: [id])
-  Order            Order[]
+  ProductsInBasket     ProductsInBaket[]
+  User                 User                  @relation(fields: [user_id], references: [id])
+  Order                Order[]
 }
 
 model ProductsInBaket {
-  basket_id  Int 
-  product_id Int
-  value      Int @default(1)
+  basket_id            Int 
+  product_id           Int
+  value                Int                   @default(1)
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+  deleted_at           DateTime?
 
-  Basket  Basket  @relation(fields: [basket_id], references: [id])
-  Product Product @relation(fields: [product_id], references: [id])
+  Basket               Basket                @relation(fields: [basket_id], references: [id])
+  Product              Product               @relation(fields: [product_id], references: [id])
 
   @@id([product_id, basket_id])
 }
 
 model Order {
-  id         Int       @id(map: "order_pk") @unique(map: "order_id_uindex") @default(autoincrement())
-  basket_id  Int       
-  user_id    Int
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt 
-  deleted_at DateTime?
+  id                   Int                   @id(map: "order_pk") @unique(map: "order_id_uindex") @default(autoincrement())
+  basket_id            Int       
+  user_id              Int
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt 
+  deleted_at           DateTime?
  
-  Basket Basket @relation(fields: [basket_id], references: [id])
+  Basket               Basket                @relation(fields: [basket_id], references: [id])
 }
