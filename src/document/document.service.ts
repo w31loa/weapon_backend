@@ -16,7 +16,6 @@ export class DocumentService {
 
   async create(createDocumentInput: CreateDocumentInput): Promise<Document> {
     const { ...createDocument } = createDocumentInput;
-
     return await this.prisma.document.create({
       data: createDocument,
     });
@@ -36,7 +35,7 @@ export class DocumentService {
 
   async getDocument(id: number[] | number): Promise<Document[] | Document | null> {
     if (typeof id === 'number') {
-      return this.findOne(id);
+      return this.findOne(id);  
     }
     return await this.prisma.document.findMany({ where: { id: { in: id } } });
   }
@@ -56,10 +55,10 @@ export class DocumentService {
   }
 
   async uploadFile(file: Express.Multer.File): Promise<Document> {
+
     const fileName = `${uuidv4()}${extname(file.originalname)}`;
     
     const { destination, size } = this.validateFile(file)
-    
     fs.writeFileSync(
       `${destination}/${fileName}`,
       file.buffer,
@@ -94,7 +93,6 @@ export class DocumentService {
             throw new BadRequestException(`Write file error`);
           }
         });
-
         return {
           name: fileName,
           url: fileUrl,

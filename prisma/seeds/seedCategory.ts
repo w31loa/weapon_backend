@@ -28,7 +28,7 @@ export async function seedCategory() {
             id: 6,
             title: "Спортивные пистолеты"
         }
-    ]
+    ] 
 
     for (const category of data) {
         await prisma.category.upsert({

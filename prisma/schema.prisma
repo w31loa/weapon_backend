@@ -30,7 +30,7 @@ model User {
   login                String                @unique(map: "user_login_uindex")
   email                String                @unique(map: "user_email_uindex")
   password             String
-  created_at           DateTime              @default(now())
+  created_at           DateTime              @default(now()) 
   updated_at           DateTime              @updatedAt
   deleted_at           DateTime?
   Basket               Basket?

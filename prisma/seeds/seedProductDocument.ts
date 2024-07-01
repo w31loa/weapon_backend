@@ -56,6 +56,10 @@ export async function seedProductDocument() {
             product_id: 5,
             document_id: 13
         },
+        {
+            product_id: 3,
+            document_id: 14
+        },
 
     ]
 

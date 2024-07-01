@@ -81,6 +81,12 @@ export async function seedDocument(){
             "url": "a4707e22-8b41-4314-bdb2-1f67dbdacd94.png",
             "name": "a4707e22-8b41-4314-bdb2-1f67dbdacd94.png",
             "size": 20638
+        },
+        {
+            "id": 14,
+            "url": "ee1b443f-eaee-44a0-97f6-e664d9d81e6c.png",
+            "name": "ee1b443f-eaee-44a0-97f6-e664d9d81e6c.png",
+            "size": 24651
         }
       
     ]
