@@ -51,7 +51,7 @@ export class CategoryService {
 
   }
 
-  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category | null> {
+  async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
     await this.prisma.category.update({
       where: { id },
       data: updateCategoryInput

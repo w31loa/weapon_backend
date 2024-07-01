@@ -19,5 +19,5 @@ export class DocumentController {
   @UseInterceptors(FilesInterceptor('files'))
   async uploadFiles(@UploadedFiles() files: [Express.Multer.File]): Promise<Document[]> {
     return this.documentService.uploadFiles(files);
-  }
+  } 
 }

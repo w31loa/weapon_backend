@@ -12,23 +12,24 @@ export class UserService {
 
   async create(createUserInput: CreateUserInput): Promise<User> {
 
-    const loginExist = await this.findOneByLogin(createUserInput.login)
-    const emailExist = await this.prisma.user.findFirst({
-      where: { email: createUserInput.email }
+    const userExists = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: createUserInput.email },
+          { login: createUserInput.login }
+        ]
+      }
     })
 
-    if (loginExist) {
-      throw new BadRequestException('Login already exist')
-    }
-    if (emailExist) {
-      throw new BadRequestException('Email already exist')
+    if (userExists) {
+      throw new BadRequestException('User with this email or login  already exist!')
     }
 
     const hashPassword = await bcrypt.hash(createUserInput.password, 3);
     createUserInput.password = hashPassword
     return this.prisma.user.create({
       data: {
-        ...createUserInput, 
+        ...createUserInput,
         Basket: {
           create: {}
         }

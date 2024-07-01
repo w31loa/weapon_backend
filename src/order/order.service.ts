@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { PrismaService } from 'src/common/prisma/prisma.service';
@@ -24,11 +24,11 @@ export class OrderService {
       }
     })
 
-    if (newOrder) {
-      await this.mailService.sendNewOrderEmail(newOrder, user)
-      await this.basketService.clearBasket(userId)
+    if (!newOrder) {
+      throw new HttpException('Order create error!' , HttpStatus.BAD_REQUEST)
     }
-
+    await this.mailService.sendNewOrderEmail(newOrder, user)
+    await this.basketService.clearBasket(userId)
     return newOrder
   }
 
@@ -38,7 +38,11 @@ export class OrderService {
       take
     })
 
-    const totalCount = await this.prisma.order.count()
+    const totalCount = await this.prisma.order.count({
+      where:{
+        deleted_at: null
+      }
+    })
     return {
       orders: recivedOrders,
       totalCount
@@ -56,7 +60,7 @@ export class OrderService {
     return receivedOrder;
   }
 
-  async update(id: number, updateOrderInput: UpdateOrderInput): Promise<Order | null> {
+  async update(id: number, updateOrderInput: UpdateOrderInput): Promise<Order> {
     await this.prisma.order.update({
       where: { id },
       data: updateOrderInput

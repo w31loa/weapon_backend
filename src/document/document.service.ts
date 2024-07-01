@@ -57,17 +57,17 @@ export class DocumentService {
 
   async uploadFile(file: Express.Multer.File): Promise<Document> {
     const fileName = `${uuidv4()}${extname(file.originalname)}`;
-
+    
     const { destination, size } = this.validateFile(file)
-
+    
     fs.writeFileSync(
       `${destination}/${fileName}`,
       file.buffer,
     );
-
+    
     return await this.create({
       name: fileName,
-      url: `${destination}/${fileName}`,
+      url: `${fileName}`,
       size
     });
   }
@@ -80,9 +80,8 @@ export class DocumentService {
     }
 
     try {
-
       const staticPath = this.configService.get('STATIC_PATH');
-      const uploadPath = join(__dirname, '..', '..', staticPath);
+      const uploadPath = join(__dirname, '..', staticPath);
 
       await this.createFolderIfDoesNotExist(uploadPath);
 
@@ -103,7 +102,9 @@ export class DocumentService {
         };
       });
 
-      return this.prisma.$transaction(dataArr.map((data) => this.prisma.document.create({ data })));
+      return await this.prisma.document.createManyAndReturn({
+        data: dataArr
+      });
     } catch (e) {
       if (e instanceof BadRequestException) {
         throw e;

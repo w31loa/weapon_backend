@@ -40,6 +40,9 @@ export class BasketService {
       create: {
         basket_id: basket.id,
         product_id: productId,
+      },
+      include:{
+        Product: true
       }
     })
   }
@@ -56,7 +59,10 @@ export class BasketService {
     const receivedProductsInBasket = await this.prisma.productsInBaket.findMany({
       where,
       skip,
-      take
+      take,
+      include:{
+        Product: true
+      }
     });
 
     return {
@@ -65,7 +71,7 @@ export class BasketService {
     }
   }
 
-  async update(userId: number, updateBasketInput: UpdateBasketInput): Promise<ProductsInBasket | null> {
+  async update(userId: number, updateBasketInput: UpdateBasketInput): Promise<ProductsInBasket> {
     const basket = await this.getBasketByUserId(userId)
     await this.prisma.productsInBaket.updateMany({
       where: {

@@ -16,16 +16,19 @@ export class ProductService {
     const arrayOfProductDocuments: Prisma.ProductDocumentCreateManyProductInput[] = [];
     const { document_ids, ...createProductData } = createProductInput;
 
-    const produstTitleExist = await this.prisma.product.findFirst({
+    const produstExist = await this.prisma.product.findFirst({
       where: {
-        title: createProductData.title,
+        OR: [
+          { article: createProductData.article },
+          {
+            title: {
+              equals: createProductInput.title, mode: 'insensitive'
+            },
+          }
+        ]
       }
     })
-    const produstArticleExist = await this.prisma.product.findFirst({
-      where: {
-        article: createProductData.article,
-      }
-    })
+
     const category = await this.prisma.category.findFirst({
       where: {
         id: createProductInput.category_id
@@ -33,7 +36,10 @@ export class ProductService {
     })
 
     if (!category) {
-      throw new BadRequestException(`Category with id ${createProductData.category_id} does not exist`)
+      throw new BadRequestException(`Category with id ${createProductData.category_id} does not exist!`)
+    }
+    if (produstExist) {
+      throw new BadRequestException("Product with this title or article already exist!")
     }
 
     if (document_ids && document_ids.length > 0) {
@@ -42,13 +48,6 @@ export class ProductService {
           document_id: id,
         });
       });
-    }
-
-    if (produstTitleExist) {
-      throw new BadRequestException('Product with this title exist')
-    }
-    if (produstArticleExist) {
-      throw new BadRequestException('Product with this article exist')
     }
 
     return await this.prisma.product.create({
@@ -67,10 +66,13 @@ export class ProductService {
   async findAll(skip?: number, take?: number, categoryId?: number, search?: string): Promise<FindAllProductsOutput> {
     const where: Prisma.ProductWhereInput = {
       category_id: categoryId,
-      OR: [
-        { title: { contains: search, mode: 'insensitive' } },
-        { article: { contains: search, mode: 'insensitive' } },
-      ]
+      deleted_at: null,
+      OR: search ?
+        [
+          { title: { contains: search, mode: 'insensitive' } },
+          { article: { contains: search, mode: 'insensitive' } },
+        ]
+        : undefined
     }
 
     const recivedProducts = await this.prisma.product.findMany({
@@ -116,7 +118,7 @@ export class ProductService {
     return receivedProduct
   }
 
-  async update(id: number, updateProductInput: UpdateProductInput): Promise<Product | null> {
+  async update(id: number, updateProductInput: UpdateProductInput): Promise<Product> {
     await this.prisma.product.update({
       where: { id },
       data: updateProductInput

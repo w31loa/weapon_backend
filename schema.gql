@@ -73,6 +73,11 @@ type Category {
   Product: [Product!]
 }
 
+type FindAllCategoriesOutput {
+  categories: [Category!]
+  totalCount: Int!
+}
+
 type FindAllProductsOutput {
   products: [Product!]
   totalCount: Int!
@@ -112,7 +117,7 @@ type FindAllOrdersOutput {
 
 type Query {
   user(id: Int!): User!
-  categories(skip: Int, take: Int): [Category!]!
+  categories(skip: Int, take: Int): [FindAllCategoriesOutput!]!
   category(id: Int!): Category!
   products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!

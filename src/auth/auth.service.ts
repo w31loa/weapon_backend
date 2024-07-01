@@ -24,17 +24,6 @@ export class AuthService {
         registrationDto: RegistrationDto
     ): Promise<TokensInterface> {
 
-        const doesEmailExist = await this.prisma.user.findFirst({ where: { email: registrationDto.email } });
-
-        if (doesEmailExist) {
-            throw new BadRequestException(`Email:${registrationDto.email} already exists.`);
-        }
-
-        const doesLoginExist = await this.prisma.user.findFirst({ where: { login: registrationDto.login } });
-        if (doesLoginExist) {
-            throw new BadRequestException(`Login:${registrationDto.login} already exists.`);
-        }
-
         const newUser = await this.userService.create({
             ...registrationDto
         })
@@ -50,7 +39,6 @@ export class AuthService {
 
     async validateUser(login:string , password:string): Promise<any>{
         const user = await this.userService.findOneByLogin(login)
-        // console.log(user)
         const passwordMatches = user 
         ? await bcrypt.compare(password, user.password)
         : false
@@ -60,11 +48,9 @@ export class AuthService {
         }
 
         return null
-
     }
 
     async login(user : Omit<User, 'password'>): Promise<TokensInterface>{
-
         if(!user){
             throw new ForbiddenException('User not found')
         }
@@ -74,7 +60,6 @@ export class AuthService {
             login: user.login,
             email: user.email
         }
-
         return this.generateTokens(payload)
     }
 
@@ -90,9 +75,7 @@ export class AuthService {
             login: user.login,
             email: user.email
         }
-
         return this.generateTokens(payload)
-
     }
 
     private async generateTokens(payload: IPayload): Promise<TokensInterface> {
