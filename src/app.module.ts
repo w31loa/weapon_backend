@@ -17,7 +17,7 @@ import { join } from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'dist/static'),
+      rootPath: join(__dirname, '..', '/static'),
       serveRoot: '/static/',
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

@@ -83,12 +83,15 @@ export class ProductService {
         ProductDocument: {
           where: {
             deleted_at: null
+          },
+          include:{
+            Document: true
           }
         },
-        Category: true
+        Category: true, 
       }
     });
-
+    // console.log(recivedProducts)
     const totalCount = await this.prisma.product.count({ where })
     return {
       products: recivedProducts,
