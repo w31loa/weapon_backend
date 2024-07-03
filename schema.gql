@@ -117,7 +117,7 @@ type FindAllOrdersOutput {
 
 type Query {
   user(id: Int!): User!
-  categories(skip: Int, take: Int): [FindAllCategoriesOutput!]!
+  categories(skip: Int, take: Int): FindAllCategoriesOutput!
   category(id: Int!): Category!
   products(skip: Int, take: Int, search: String, categoryId: Int): FindAllProductsOutput!
   product(id: Int!): Product!
@@ -131,7 +131,6 @@ type Query {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   removeCategory(id: Int!): Category!
@@ -147,12 +146,6 @@ type Mutation {
   removeOrder(id: Int!): Order!
   createDocument(createDocumentInput: CreateDocumentInput!): Document!
   updateDocument(updateDocumentInput: UpdateDocumentInput!): Document!
-}
-
-input CreateUserInput {
-  login: String!
-  email: String!
-  password: String!
 }
 
 input CreateCategoryInput {

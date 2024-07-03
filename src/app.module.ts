@@ -24,7 +24,6 @@ import { join } from 'path';
       autoSchemaFile: 'schema.gql',
       playground: true,
       driver: ApolloDriver,
-      // resolvers: { JSON: GraphQLJSON },
     }),
     ConfigModule.forRoot({ isGlobal: true}),
     PrismaModule, MailModule, AuthModule, UserModule, CategoryModule, ProductModule, BasketModule, OrderModule, DocumentModule],
