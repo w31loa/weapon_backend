@@ -13,10 +13,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  //ЧЕ ЭТО 
-  // app.useStaticAssets(join(__dirname, config.get('STATIC_PATH')!), {
-  //   prefix: config.get('static_prefix') ?? '/static/',
-  // });
+
   await app.listen(3000);
 }
 bootstrap();

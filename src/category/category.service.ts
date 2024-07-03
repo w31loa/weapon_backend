@@ -4,6 +4,7 @@ import { UpdateCategoryInput } from './dto/update-category.input';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { Category } from './models/category.model';
 import { FindAllCategoriesOutput } from './dto/find-all-categories.output';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
@@ -13,8 +14,13 @@ export class CategoryService {
   async create(createCategoryInput: CreateCategoryInput): Promise<Category> {
 
     const categoryExist = await this.prisma.category.findFirst({
-      where: { title: createCategoryInput.title }
+      where: { 
+        title: { 
+          equals: createCategoryInput.title, mode: 'insensitive'
+        } 
+      }
     })
+
     if (categoryExist) {
       throw new BadRequestException("This category already exist!")
     }
@@ -25,12 +31,17 @@ export class CategoryService {
   }
 
   async findAll(skip?: number, take?: number,): Promise<FindAllCategoriesOutput> {
+    const where: Prisma.CategoryWhereInput = {
+      deleted_at: null
+    }
+
     const recievidCategoires = await this.prisma.category.findMany({
+      where,
       take,
       skip
     })
 
-    const totalCount = await this.prisma.category.count({})
+    const totalCount = await this.prisma.category.count({ where })
 
     return {
       categories: recievidCategoires,
@@ -44,18 +55,22 @@ export class CategoryService {
         id
       }
     })
+
     if (!receivedCategory) {
       throw new NotFoundException()
     }
-    return receivedCategory
 
+    return receivedCategory
   }
 
   async update(id: number, updateCategoryInput: UpdateCategoryInput): Promise<Category> {
     await this.prisma.category.update({
       where: { id },
-      data: updateCategoryInput
+      data: {
+        ...updateCategoryInput
+      }
     })
+
     return this.findOne(id)
   }
 
