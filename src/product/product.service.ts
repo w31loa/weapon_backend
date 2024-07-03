@@ -2,7 +2,6 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import { ProductModel } from './models/product';
 import { Product } from './models/product.model';
 import { Prisma } from '@prisma/client';
 import { FindAllProductsOutput } from './dto/find-all-products.output';
@@ -43,7 +42,7 @@ export class ProductService {
     }
 
     if (document_ids && document_ids.length > 0) {
-      document_ids.forEach((id) => {
+      document_ids.map((id) => {
         arrayOfProductDocuments.push({
           document_id: id,
         });
@@ -93,6 +92,7 @@ export class ProductService {
     });
     // console.log(recivedProducts)
     const totalCount = await this.prisma.product.count({ where })
+
     return {
       products: recivedProducts,
       totalCount
@@ -124,8 +124,11 @@ export class ProductService {
   async update(id: number, updateProductInput: UpdateProductInput): Promise<Product> {
     await this.prisma.product.update({
       where: { id },
-      data: updateProductInput
+      data: {
+        ...updateProductInput
+      }
     })
+    
     return this.findOne(id)
   }
 

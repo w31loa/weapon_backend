@@ -42,16 +42,27 @@ export class BasketService {
         product_id: productId,
       },
       include:{
-        Product: true
+        Product: {
+          include: {
+            ProductDocument: {
+              where: {
+                deleted_at: null,
+              },
+              include: {
+                Document: true
+              }
+            }
+          }
+        }
       }
     })
   }
 
   async findAll(userId: number, skip?: number, take?: number): Promise<FindAllProductsInBasketOutput> {
-    const basket = await this.getBasketByUserId(userId)
-
     const where: Prisma.ProductsInBaketWhereInput = {
-      basket_id: basket.user_id
+      Basket: {
+        user_id: userId,
+      }
     }
 
     const totalCount = await this.prisma.productsInBaket.count({ where })
@@ -61,7 +72,18 @@ export class BasketService {
       skip,
       take,
       include:{
-        Product: true
+        Product: {
+          include: {
+            ProductDocument: {
+              where: {
+                deleted_at: null,
+              },
+              include: {
+                Document: true
+              }
+            },
+          }
+        }
       }
     });
 
@@ -72,12 +94,12 @@ export class BasketService {
   }
 
   async update(userId: number, updateBasketInput: UpdateBasketInput): Promise<ProductsInBasket> {
-    const basket = await this.getBasketByUserId(userId)
     await this.prisma.productsInBaket.updateMany({
       where: {
         product_id: updateBasketInput.product_id,
-        basket_id: basket.id
-
+        Basket: {
+          user_id: userId
+        }
       },
       data: {
         value: updateBasketInput.value
@@ -88,18 +110,20 @@ export class BasketService {
     return await this.prisma.productsInBaket.findFirst({
       where: {
         product_id: updateBasketInput.product_id,
-        basket_id: basket.id
+        Basket: {
+          user_id: userId
+        }
       }
     })
-
   }
 
   async removeProductFromBasket(userId: number, product_id: number): Promise<ProductsInBasket> {
-    const basket = await this.getBasketByUserId(userId)
     const receivedProduct = await this.prisma.productsInBaket.findFirst({
       where: {
         product_id,
-        basket_id: basket.id
+        Basket: {
+          user_id: userId
+        }
       }
     })
 
@@ -107,11 +131,11 @@ export class BasketService {
       throw new BadRequestException('This product does not exist or was previously removed')
     }
 
-    await this.prisma.productsInBaket.delete({
+    await this.prisma.productsInBaket.deleteMany({
       where: {
-        product_id_basket_id: {
-          basket_id: basket.id,
-          product_id,
+        product_id,
+        Basket: {
+          user_id: userId
         }
       }
     });
@@ -120,17 +144,19 @@ export class BasketService {
   }
 
   async clearBasket(userId: number): Promise<ProductsInBasket[]> {
-    const basket = await this.getBasketByUserId(userId)
-
     const receivedProducts = await this.prisma.productsInBaket.findMany({
       where: {
-        basket_id: basket.id
+        Basket: {
+          user_id: userId
+        }
       }
     })
 
     await this.prisma.productsInBaket.deleteMany({
       where: {
-        basket_id: basket.id
+        Basket: {
+          user_id: userId
+        }
       }
     })
 

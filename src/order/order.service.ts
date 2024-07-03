@@ -27,22 +27,26 @@ export class OrderService {
     if (!newOrder) {
       throw new HttpException('Order create error!' , HttpStatus.BAD_REQUEST)
     }
+
     await this.mailService.sendNewOrderEmail(newOrder, user)
     await this.basketService.clearBasket(userId)
-    return newOrder
+
+    return newOrder;
   }
 
   async findAll(skip?: number, take?: number): Promise<FindAllOrdersOutput> {
+    const where: Prisma.OrderWhereInput = {
+      deleted_at: null
+    };
+
     const recivedOrders = await this.prisma.order.findMany({
+      where,
       skip,
       take
-    })
+    });
 
-    const totalCount = await this.prisma.order.count({
-      where:{
-        deleted_at: null
-      }
-    })
+    const totalCount = await this.prisma.order.count({ where });
+
     return {
       orders: recivedOrders,
       totalCount
@@ -52,19 +56,23 @@ export class OrderService {
   async findOne(id: number): Promise<Order> {
     const receivedOrder = await this.prisma.order.findFirst({
       where: { id }
-    })
+    });
 
     if (!receivedOrder) {
-      throw new NotFoundException()
+      throw new NotFoundException();
     }
+
     return receivedOrder;
   }
 
   async update(id: number, updateOrderInput: UpdateOrderInput): Promise<Order> {
     await this.prisma.order.update({
       where: { id },
-      data: updateOrderInput
+      data: {
+        ...updateOrderInput
+      }
     })
+
     return this.findOne(id)
   }
 
